@@ -1,5 +1,5 @@
 """
-	There's a description
+    There's a description
 
 """
 
@@ -14,13 +14,9 @@ import googlemaps
 from processing import *
 import config
 
-BOT_TOKEN = config.BOT_TOKEN
-GGL_API_TOKEN = config.GGL_API_TOKEN
-PLANTAIN_STICK = config.PLANTAIN_STICK
-HELP_TEXT = config.HELP_TEXT
 
 gmaps = googlemaps.Client(key=config.GGL_API_TOKEN)
-bot = telebot.TeleBot(BOT_TOKEN)
+bot = telebot.TeleBot(config.BOT_TOKEN)
 
 location = {}
 
@@ -29,7 +25,7 @@ location = {}
 
 @bot.message_handler(commands=["help"])
 def helpme(message):
-    bot.send_message(message.chat.id, HELP_TEXT, parse_mode='HTML')     
+    bot.send_message(message.chat.id, config.HELP_TEXT, parse_mode='HTML')     
     
     
 @bot.message_handler(commands=["start"])
@@ -55,52 +51,65 @@ def reset(message):
    
 @bot.message_handler(content_types=['location'])
 def locat(message):
+    if (get_key(message.chat.id) not in location.keys()):
+        location[get_key(message.chat.id)] = pickle_load(get_key(message.chat.id)+'.pickle')[-10:]
     try:
         user_key = get_key(message.chat.id)
         location[get_key(message.chat.id)].append([location[user_key][-1][0] + 1, message.location.longitude, \
                                                     message.location.latitude, message.date])
         bot.send_message(message.chat.id, "Bless you! It's your {} sneezes".format(str(location[user_key][-1][0])))
+        if location[user_key][-1][0] % 10 == 0 :
+            bot.send_sticker(message.chat.id, config.PLANTAIN_STICK) #send podorojnik sticker
+        pickle_dump(user_key, location)
+        location[user_key] = location[user_key][-10:] 
     except:
+        bot.send_message(message.chat.id, 'Try /start')
         pass  
     
     
 @bot.message_handler(commands=['sneeze'])
 def sneeze(message):
+    if (get_key(message.chat.id) not in location.keys()):
+        location[get_key(message.chat.id)] = pickle_load(get_key(message.chat.id)+'.pickle')[-10:]
+    
     try:
         user_key = get_key(message.chat.id)
         location[user_key].append([location[user_key][-1][0] + 1, 'None', 'None', message.date])
                                          # add sneeze count
         bot.send_message(message.chat.id, "Bless you! It's your {} sneezes".format(str(location[user_key][-1][0])))
         if location[user_key][-1][0] % 10 == 0 :
-            bot.send_sticker(message.chat.id, 'CAADAgADiB4AAlOx9wNxz1H_WaIWjAI') #send podorojnik sticker
-        if check_mem(location[user_key]):
-            pickle_dump(user_key, location)
-            location[user_key] = location[user_key][-10:]               
+            bot.send_sticker(message.chat.id, config.PLANTAIN_STICK) #send podorojnik sticker
+        pickle_dump(user_key, location)
+        location[user_key] = location[user_key][-10:]               
     except:
-    	bot.send_message(message.chat.id, 'Try /start')
+        bot.send_message(message.chat.id, 'Try /start')
 
     
 @bot.message_handler(commands=["getgeo"])
 def getgeo(message):
-    # try:
+    if (get_key(message.chat.id) not in location.keys()):
+        location[get_key(message.chat.id)] = pickle_load(get_key(message.chat.id)+'.pickle')[-10:]
+    try:
         bot.send_message(message.chat.id, coord_to_md(location[get_key(message.chat.id)][-5:], gmaps), parse_mode='HTML')
 
-    # except:
-        # pass
+    except:
+        pass
 
     
-@bot.message_handler(commands=["getlocation"])
-def getlocation(message):
-    try:
-        if location[get_key(message.chat.id)][-1][2] != 'None':
-            bot.send_location(message.chat.id, location[get_key(message.chat.id)][-1][2], \
-                                        location[get_key(message.chat.id)][-1][1])
-        else:
-            bot.send_message(message.chat.id, 'Your last sneeze have no location')
+# @bot.message_handler(commands=["getlocation"])
+# def getlocation(message):
+#     if (get_key(message.chat.id) not in location.keys()):
+#         location[get_key(message.chat.id)] = pickle_load(get_key(message.chat.id)+'.pickle')[-10:]
+#     try:
+#         if location[get_key(message.chat.id)][-1][2] != 'None':
+#             bot.send_location(message.chat.id, location[get_key(message.chat.id)][-1][2], \
+#                                         location[get_key(message.chat.id)][-1][1])
+#         else:
+#             bot.send_message(message.chat.id, 'Your last sneeze have no location')
 
-    except:
-        bot.send_message(message.chat.id, 'Your last sneeze have no location')
-        pass
+#     except:
+#         bot.send_message(message.chat.id, 'Your last sneeze have no location')
+#         pass
     
     
     

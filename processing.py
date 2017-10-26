@@ -6,7 +6,7 @@
 import time
 from hashlib import md5
 import pickle
-
+import os
 
 def coord_to_md(coord_list, gmaps):
     if coord_list[0][0] == 0:
