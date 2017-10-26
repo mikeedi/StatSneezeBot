@@ -23,7 +23,6 @@ gmaps = googlemaps.Client(key=config.GGL_API_TOKEN)
 bot = telebot.TeleBot(BOT_TOKEN)
 
 location = {}
-print("I'm ready")
 
 
 
