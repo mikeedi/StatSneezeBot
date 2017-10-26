@@ -8,7 +8,7 @@ from hashlib import md5
 import pickle
 
 
-def coord_to_md(coord_list):
+def coord_to_md(coord_list, gmaps):
     if coord_list[0][0] == 0:
         del coord_list[0]
         

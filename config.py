@@ -4,5 +4,5 @@
 
 BOT_TOKEN = ''
 GGL_API_TOKEN = ''
-PLANTAIN_STICK = ''
-HELP_TEXT = ''
+PLANTAIN_STICK = 'CAADAgADiB4AAlOx9wNxz1H_WaIWjAI'
+HELP_TEXT = 'I can very little: \n/help - some commands \n/sneeze or button - add new sneeze  \n/reset - reset all your sneezes  \n/getgeo - get history of all your sneezes with geoposition and time \n/getlocation - get last sneeze at map'

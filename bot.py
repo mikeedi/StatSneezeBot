@@ -1,6 +1,6 @@
 """
 	There's a description
-	
+
 """
 
 
@@ -8,7 +8,8 @@
 import telebot
 from telebot import types
 import googlemaps
-import gmplot
+
+
 
 from processing import *
 import config
@@ -18,10 +19,12 @@ GGL_API_TOKEN = config.GGL_API_TOKEN
 PLANTAIN_STICK = config.PLANTAIN_STICK
 HELP_TEXT = config.HELP_TEXT
 
-
-
-
+gmaps = googlemaps.Client(key=config.GGL_API_TOKEN)
 bot = telebot.TeleBot(BOT_TOKEN)
+
+location = {}
+print("I'm ready")
+
 
 
 
@@ -75,16 +78,16 @@ def sneeze(message):
             pickle_dump(user_key, location)
             location[user_key] = location[user_key][-10:]               
     except:
-        pass
+    	bot.send_message(message.chat.id, 'Try /start')
 
     
 @bot.message_handler(commands=["getgeo"])
 def getgeo(message):
-    try:
-        bot.send_message(message.chat.id, coord_to_md(location[get_key(message.chat.id)][-5:]), parse_mode='HTML')
+    # try:
+        bot.send_message(message.chat.id, coord_to_md(location[get_key(message.chat.id)][-5:], gmaps), parse_mode='HTML')
 
-    except:
-        pass
+    # except:
+        # pass
 
     
 @bot.message_handler(commands=["getlocation"])
