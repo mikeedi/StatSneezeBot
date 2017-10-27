@@ -51,3 +51,9 @@ def get_key(user_id):
 
 def unix_to_local(t):
     return time.strftime("%D %H:%M", time.localtime(int(t)))
+
+def get_last_location(coord):
+    for c in coord[-1:]:
+        if c[2] != 'None' and c[1] != 'None':
+            return c[2], c[1]
+        return 'None', 'None'

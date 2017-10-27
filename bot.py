@@ -106,12 +106,17 @@ def getgeo(message):
 def getlocation(message):
     coord = pickle_load(get_key(message.chat.id)+'.pickle')
     try:
-        gmap = gmplot.GoogleMapPlotter(59.875559, 29.827207, 16, apikey=config.GGL_API_TOKEN)
+        lat, lon = get_last_location(coord)
+        if lat == 'None' or lon == 'None':
+            raise TypeError
+        gmap = gmplot.GoogleMapPlotter(lat, lon, 16, apikey=config.GGL_API_TOKEN)
         for c in coord:
             lat = c[2]
             lon = c[1]
             if lat == "None" or lon == "None":
                 continue
+
+
             gmap.heatmap([lat], [lon])#, '#3B0B39', size=40, marker=False)
         gmap.draw("{}.html".format(get_key(message.chat.id)))
         with open("{}.html".format(get_key(message.chat.id)), 'rb') as f:
