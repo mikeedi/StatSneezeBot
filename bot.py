@@ -30,7 +30,7 @@ def helpme(message):
     
 @bot.message_handler(commands=["start"])
 def start(message):
-    if get_key(message.chat.id) in location.keys():
+    if exist("{}.pickle".format(get_key(message.chat.id))):
         bot.send_message(message.chat.id, "You have already started")
     else:
         location[get_key(message.chat.id)] = [[0]]
@@ -43,78 +43,82 @@ def start(message):
     bot.send_message(message.chat.id, "Tap when sneezed", reply_markup=keyboard)
     
     
-@bot.message_handler(commands=["reset"])
-def reset(message):
-    bot.send_message(message.chat.id, "Your sneezes history is empty")
-    location[get_key(message.chat.id)] = [[0]]
+
  
    
 @bot.message_handler(content_types=['location'])
 def locat(message):
-    if (get_key(message.chat.id) not in location.keys()):
-        location[get_key(message.chat.id)] = pickle_load(get_key(message.chat.id)+'.pickle')[-10:]
+    user_key = get_key(message.chat.id)
+    if user_key not in location.keys():
+        location[user_key] = pickle_load('{}.pickle'.format(user_key))[-10:]
     try:
-        user_key = get_key(message.chat.id)
-        location[get_key(message.chat.id)].append([location[user_key][-1][0] + 1, message.location.longitude, \
+        location[user_key].append([location[user_key][-1][0] + 1, message.location.longitude, \
                                                     message.location.latitude, message.date])
         bot.send_message(message.chat.id, "Bless you! It's your {} sneezes".format(str(location[user_key][-1][0])))        
-        pickle_dump(user_key, location)
-        location[user_key] = location[user_key][-10:] 
-
+        pickle_dump(user_key, location[get_key(message.chat.id)][-1])
+        location[user_key] = pickle_load("{}.pickle".format(user_key))[-10:] 
         if location[user_key][-1][0] % 10 == 0 :
             bot.send_sticker(message.chat.id, config.PLANTAIN_STICK) #send podorojnik sticker
     except:
-        bot.send_message(message.chat.id, 'Try /start')
+        bot.send_message(message.chat.id, 'Sorry, something went wrong')
         pass  
     
     
 @bot.message_handler(commands=['sneeze'])
 def sneeze(message):
+    user_key = get_key(message.chat.id)
     if (get_key(message.chat.id) not in location.keys()):
-        location[get_key(message.chat.id)] = pickle_load(get_key(message.chat.id)+'.pickle')[-10:]
+        location[user_key] = pickle_load('{}.pickle'.format(user_key))[-10:]
     
     try:
-        user_key = get_key(message.chat.id)
         location[user_key].append([location[user_key][-1][0] + 1, 'None', 'None', message.date])
                                          # add sneeze count
         bot.send_message(message.chat.id, "Bless you! It's your {} sneezes".format(str(location[user_key][-1][0])))
-        pickle_dump(user_key, location)
-        location[user_key] = location[user_key][-10:]  
+        pickle_dump(user_key, location[get_key(message.chat.id)][-1])
+        location[user_key] = pickle_load("{}.pickle".format(user_key))[-10:] 
 
         if location[user_key][-1][0] % 10 == 0 :
             bot.send_sticker(message.chat.id, config.PLANTAIN_STICK) #send podorojnik sticker
                          
     except:
-        bot.send_message(message.chat.id, 'Try /start')
+        bot.send_message(message.chat.id, 'Sorry, something went wrong')
 
     
 @bot.message_handler(commands=["getgeo"])
 def getgeo(message):
-    if (get_key(message.chat.id) not in location.keys()):
-        location[get_key(message.chat.id)] = pickle_load(get_key(message.chat.id)+'.pickle')[-10:]
     try:
-        bot.send_message(message.chat.id, coord_to_md(location[get_key(message.chat.id)][-5:], gmaps), parse_mode='HTML')
+        bot.send_message(message.chat.id, coord_to_md(pickle_load(get_key(message.chat.id)+'.pickle')[-5:], gmaps), parse_mode='HTML')
 
     except:
+        bot.send_message(message.chat.id, 'Sorry, something went wrong')
         pass
 
+@bot.message_handler(commands=["getall"])
+def getgeo(message):
+    try:
+        bot.send_message(message.chat.id, coord_to_md(pickle_load(get_key(message.chat.id)+'.pickle'), gmaps), parse_mode='HTML')
+
+    except:
+        bot.send_message(message.chat.id, 'Sorry, something went wrong')
+        pass
     
 @bot.message_handler(commands=["getmap"])
 def getlocation(message):
     coord = pickle_load(get_key(message.chat.id)+'.pickle')
-    # try:
-    gmap = gmplot.GoogleMapPlotter(59.875559, 29.827207, 16, apikey=config.GGL_API_TOKEN)
-    for c in coord:
-        lat = coord[2]
-        lon = coord[1]
-        if lat == "None" or lon == "None":
-            continue
-        gmap.scatter(lat, lon, '#3B0B39', size=40, marker=False)
-    gmap.draw("{}.html".format(get_key(message.chat.id)))
-    with open("{}.html".format(get_key(message.chat.id)), 'rb') as f:
-        bot.send_document(message.chat.id, f)
-    # except:
-        # pass
+    try:
+        gmap = gmplot.GoogleMapPlotter(59.875559, 29.827207, 16, apikey=config.GGL_API_TOKEN)
+        for c in coord:
+            lat = c[2]
+            lon = c[1]
+            if lat == "None" or lon == "None":
+                continue
+            gmap.heatmap([lat], [lon])#, '#3B0B39', size=40, marker=False)
+        gmap.draw("{}.html".format(get_key(message.chat.id)))
+        with open("{}.html".format(get_key(message.chat.id)), 'rb') as f:
+            bot.send_document(message.chat.id, f)
+    except:
+        bot.send_message(message.chat.id, 'You have no location')
+        pass
     
     
     

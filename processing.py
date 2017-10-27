@@ -36,13 +36,13 @@ def pickle_load(filename):
         obj = pickle.load(f)
     return obj
 
-def pickle_dump(user_hash, location):
-    filename = str(user_hash) + '.pickle' 
+def pickle_dump(user_hash, last):
+    filename = '{}.pickle'.format(user_hash)
     if exist(filename):
         obj = pickle_load(filename)
-        obj.extend(location[user_hash])
+        obj.append(last)
     else:
-        obj = location[user_hash]
+        obj = [last]
     with open(filename, 'wb') as f:
         pickle.dump(obj, f)
                
