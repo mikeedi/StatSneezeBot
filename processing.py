@@ -1,4 +1,5 @@
 """
+    -*- coding: utf-8 -*-
    Some function for processing data 
 """
 
@@ -8,6 +9,7 @@ from hashlib import md5
 import pickle
 import os
 
+#translation coordinate to street names and return html-like text
 def coord_to_md(coord_list, gmaps):
     if coord_list[0][0] == 0:
         del coord_list[0]
@@ -21,6 +23,7 @@ def coord_to_md(coord_list, gmaps):
         text +="<b># {}</b> {} {} \n".format(coord[0], street, unix_to_local(coord[3]))
     return text
 
+#check exist of file
 def exist(path):
     try:
         os.stat(path)
@@ -28,16 +31,15 @@ def exist(path):
         return False
     return True  
 
-def check_mem(user_coord):
-    return len(user_coord) > 100
 
+# use pickle instead database
 def pickle_load(filename):
     with open(filename, 'rb') as f:
         obj = pickle.load(f)
     return obj
 
 def pickle_dump(user_hash, last):
-    filename = '{}.pickle'.format(user_hash)
+    filename = 'pickles/{}.pickle'.format(user_hash)
     if exist(filename):
         obj = pickle_load(filename)
         obj.append(last)
@@ -45,12 +47,13 @@ def pickle_dump(user_hash, last):
         obj = [last]
     with open(filename, 'wb') as f:
         pickle.dump(obj, f)
-               
+              
+# get hash of user id 
 def get_key(user_id):
     return md5(str(user_id).encode()).hexdigest()
 
 def unix_to_local(t):
-    return time.strftime("%D %H:%M", time.localtime(int(t)))
+    return time.strftime("%D %H:%M", time.gmtime(int(t+10800))) # we use GMT + 3 time zone.
 
 def get_last_location(coord):
     for c in coord[-1:]:
