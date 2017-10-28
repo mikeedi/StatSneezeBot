@@ -1,4 +1,5 @@
 """
+    -*- coding: utf-8 -*-
     There's a description
 
 """
@@ -17,7 +18,7 @@ import config
 
 gmaps = googlemaps.Client(key=config.GGL_API_TOKEN)
 bot = telebot.TeleBot(config.BOT_TOKEN)
-
+bot.set_webhook()
 location = {}
 
 
@@ -97,11 +98,11 @@ def getgeo(message):
 def getgeo(message):
     try:
         bot.send_message(message.chat.id, coord_to_md(pickle_load(get_key(message.chat.id)+'.pickle'), gmaps), parse_mode='HTML')
-
     except:
         bot.send_message(message.chat.id, 'Sorry, something went wrong')
         pass
     
+
 @bot.message_handler(commands=["getmap"])
 def getlocation(message):
     coord = pickle_load(get_key(message.chat.id)+'.pickle')
