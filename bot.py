@@ -10,15 +10,53 @@ import telebot
 from telebot import types
 import googlemaps
 import gmplot
-
+import flask
+import logging
 
 from processing import *
 import config
 
 
 gmaps = googlemaps.Client(key=config.GGL_API_TOKEN)
+
+API_TOKEN = config.BOT_TOKEN
+
+WEBHOOK_HOST = 'IP of your server '
+WEBHOOK_PORT = 8443  # 443, 80, 88 or 8443 (port need to be 'open')
+WEBHOOK_LISTEN = '0.0.0.0'  # In some VPS you may need to put here the IP addr
+
+WEBHOOK_SSL_CERT = 'CERT.pem'  # Path to the ssl certificate
+WEBHOOK_SSL_PRIV = 'KEY.pem' # Path to the ssl private key
+
+WEBHOOK_URL_BASE = "https://%s:%s" % (WEBHOOK_HOST, WEBHOOK_PORT)
+WEBHOOK_URL_PATH = "/%s/" % (API_TOKEN)
+
+
+logger = telebot.logger
+telebot.logger.setLevel(logging.INFO)
+
 bot = telebot.TeleBot(config.BOT_TOKEN)
-bot.set_webhook()
+
+app = flask.Flask(__name__)
+
+# Empty webserver index, return nothing, just http 200
+@app.route('/', methods=['GET', 'HEAD'])
+def index():
+    return ''
+
+
+# Process webhook calls
+@app.route(WEBHOOK_URL_PATH, methods=['POST'])
+def webhook():
+    if flask.request.headers.get('content-type') == 'application/json':
+        json_string = flask.request.get_data().decode('utf-8')
+        update = telebot.types.Update.de_json(json_string)
+        bot.process_new_updates([update])
+        return ''
+    else:
+        flask.abort(403)
+
+
 location = {}
 
 
@@ -126,7 +164,18 @@ def getlocation(message):
         bot.send_message(message.chat.id, 'You have no location')
         pass
     
+print(bot.get_webhook_info())  
     
     
-    
-bot.polling(none_stop=True)
+# Remove webhook, it fails sometimes the set if there is a previous webhook
+bot.remove_webhook()
+
+# Set webhook
+bot.set_webhook(url=WEBHOOK_URL_BASE+WEBHOOK_URL_PATH,
+                certificate=open(WEBHOOK_SSL_CERT, 'r'))
+
+# Start flask server
+app.run(host=WEBHOOK_LISTEN,
+        port=WEBHOOK_PORT,
+        ssl_context=(WEBHOOK_SSL_CERT, WEBHOOK_SSL_PRIV),
+debug=True)
