@@ -44,7 +44,6 @@ app = flask.Flask(__name__)
 def index():
     return ''
 
-
 # Process webhook calls
 @app.route(WEBHOOK_URL_PATH, methods=['POST'])
 def webhook():
@@ -57,9 +56,7 @@ def webhook():
         flask.abort(403)
 
 
-location = {}
-
-
+location = {}   #data store dict
 
 
 @bot.message_handler(commands=["help"])
@@ -69,28 +66,28 @@ def helpme(message):
     
 @bot.message_handler(commands=["start"])
 def start(message):
-    if exist("{}.pickle".format(get_key(message.chat.id))):
-        bot.send_message(message.chat.id, "You have already started")
-    else:
-        location[get_key(message.chat.id)] = [[0]]
-        bot.send_message(message.chat.id, "Hi. I'm a bot that collect sneezes statistics")
-        helpme(message)
-        
-    keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
-    button_geo = types.KeyboardButton(text="SNEEZED!! !", request_location=True)
-    keyboard.add(button_geo)
-    bot.send_message(message.chat.id, "Tap when sneezed", reply_markup=keyboard)
-    
-    
-
+    try: 
+        if exist("{}.pickle".format(get_key(message.chat.id))):
+            bot.send_message(message.chat.id, "You have already started")
+        else:
+            location[get_key(message.chat.id)] = [[0]]
+            bot.send_message(message.chat.id, "Hi. I'm a bot that collect sneezes statistics")
+            helpme(message)
+            
+        keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+        button_geo = types.KeyboardButton(text="SNEEZED!! !", request_location=True)
+        keyboard.add(button_geo)
+        bot.send_message(message.chat.id, "Tap when sneezed", reply_markup=keyboard)
+    except:
+        bot.send_message(message.chat.id, 'Sorry, something went wrong')
  
    
 @bot.message_handler(content_types=['location'])
 def locat(message):
-    user_key = get_key(message.chat.id)
-    if user_key not in location.keys():
-        location[user_key] = pickle_load('{}.pickle'.format(user_key))[-10:]
     try:
+        user_key = get_key(message.chat.id)
+        if user_key not in location.keys():
+            location[user_key] = pickle_load('{}.pickle'.format(user_key))[-10:]
         location[user_key].append([location[user_key][-1][0] + 1, message.location.longitude, \
                                                     message.location.latitude, message.date])
         bot.send_message(message.chat.id, "Bless you! It's your {} sneezes".format(str(location[user_key][-1][0])))        
@@ -104,12 +101,11 @@ def locat(message):
     
     
 @bot.message_handler(commands=['sneeze'])
-def sneeze(message):
-    user_key = get_key(message.chat.id)
-    if (get_key(message.chat.id) not in location.keys()):
-        location[user_key] = pickle_load('{}.pickle'.format(user_key))[-10:]
-    
+def sneeze(message): 
     try:
+        user_key = get_key(message.chat.id)
+        if (get_key(message.chat.id) not in location.keys()):
+            location[user_key] = pickle_load('{}.pickle'.format(user_key))[-10:]
         location[user_key].append([location[user_key][-1][0] + 1, 'None', 'None', message.date])
                                          # add sneeze count
         bot.send_message(message.chat.id, "Bless you! It's your {} sneezes".format(str(location[user_key][-1][0])))
@@ -139,32 +135,8 @@ def getgeo(message):
     except:
         bot.send_message(message.chat.id, 'Sorry, something went wrong')
         pass
+
     
-
-@bot.message_handler(commands=["getmap"])
-def getlocation(message):
-    coord = pickle_load(get_key(message.chat.id)+'.pickle')
-    try:
-        lat, lon = get_last_location(coord)
-        if lat == 'None' or lon == 'None':
-            raise TypeError
-        gmap = gmplot.GoogleMapPlotter(lat, lon, 16, apikey=config.GGL_API_TOKEN)
-        for c in coord:
-            lat = c[2]
-            lon = c[1]
-            if lat == "None" or lon == "None":
-                continue
-
-
-            gmap.heatmap([lat], [lon])#, '#3B0B39', size=40, marker=False)
-        gmap.draw("{}.html".format(get_key(message.chat.id)))
-        with open("{}.html".format(get_key(message.chat.id)), 'rb') as f:
-            bot.send_document(message.chat.id, f)
-    except:
-        bot.send_message(message.chat.id, 'You have no location')
-        pass
-    
-print(bot.get_webhook_info())  
     
     
 # Remove webhook, it fails sometimes the set if there is a previous webhook
@@ -174,7 +146,7 @@ bot.remove_webhook()
 bot.set_webhook(url=WEBHOOK_URL_BASE+WEBHOOK_URL_PATH,
                 certificate=open(WEBHOOK_SSL_CERT, 'r'))
 
-# Start flask server
+Start flask server
 app.run(host=WEBHOOK_LISTEN,
         port=WEBHOOK_PORT,
         ssl_context=(WEBHOOK_SSL_CERT, WEBHOOK_SSL_PRIV),
