@@ -84,7 +84,7 @@ def locat(message):
     try:
         user_key = get_key(message.chat.id)
         if user_key not in location.keys():
-            location[user_key] = pickle_load("pickles/{}.pickle".format(get_key(message.chat.id)))[-10:]
+            location[user_key] = pickle_load(user_key)[-10:]
         location[user_key].append([location[user_key][-1][0] + 1, message.location.longitude, \
                                                     message.location.latitude, message.date])
         bot.send_message(message.chat.id, "Bless you! It's your {} sneezes".format(str(location[user_key][-1][0])))        
@@ -102,7 +102,7 @@ def sneeze(message):
     try:
         user_key = get_key(message.chat.id)
         if (get_key(message.chat.id) not in location.keys()):
-            location[user_key] = pickle_load("pickles/{}.pickle".format(get_key(message.chat.id)))[-10:]
+            location[user_key] = pickle_load(user_key)[-10:]
         location[user_key].append([location[user_key][-1][0] + 1, 'None', 'None', message.date])
                                          # add sneeze count
         bot.send_message(message.chat.id, "Bless you! It's your {} sneezes".format(str(location[user_key][-1][0])))
