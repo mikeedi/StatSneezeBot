@@ -27,7 +27,7 @@ WEBHOOK_SSL_CERT = 'CERT.pem'  # Path to the ssl certificate
 WEBHOOK_SSL_PRIV = 'KEY.pem' # Path to the ssl private key
 
 WEBHOOK_URL_BASE = "https://%s:%s" % (WEBHOOK_HOST, WEBHOOK_PORT)
-WEBHOOK_URL_PATH = "/%s/" % (config.API_TOKEN)
+WEBHOOK_URL_PATH = "/%s/" % (config.BOT_TOKEN)
 
 
 logger = telebot.logger
