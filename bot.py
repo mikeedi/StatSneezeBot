@@ -89,7 +89,7 @@ def locat(message):
                                                     message.location.latitude, message.date])
         bot.send_message(message.chat.id, "Bless you! It's your {} sneezes".format(str(location[user_key][-1][0])))        
         pickle_dump(user_key, location[get_key(message.chat.id)][-1])
-        location[user_key] = pickle_load("pickles/{}.pickle".format(get_key(message.chat.id)))[-10:] 
+        location[user_key] = pickle_load(user_key)[-10:] 
         if location[user_key][-1][0] % 10 == 0 :
             bot.send_sticker(message.chat.id, config.PLANTAIN_STICK) #send podorojnik sticker
     except:
@@ -107,7 +107,7 @@ def sneeze(message):
                                          # add sneeze count
         bot.send_message(message.chat.id, "Bless you! It's your {} sneezes".format(str(location[user_key][-1][0])))
         pickle_dump(user_key, location[get_key(message.chat.id)][-1])
-        location[user_key] = pickle_load("pickles/{}.pickle".format(get_key(message.chat.id)))[-10:] 
+        location[user_key] = pickle_load(user_key)[-10:] 
 
         if location[user_key][-1][0] % 10 == 0 :
             bot.send_sticker(message.chat.id, config.PLANTAIN_STICK) #send podorojnik sticker
@@ -119,16 +119,17 @@ def sneeze(message):
 @bot.message_handler(commands=["getgeo"])
 def getgeo(message):
     try:
-        bot.send_message(message.chat.id, coord_to_md(pickle_load("pickles/{}.pickle".format(get_key(message.chat.id)))[-5:], gmaps), parse_mode='HTML')
+        bot.send_message(message.chat.id, coord_to_md(pickle_load(get_key(message.chat.id))[-5:]), parse_mode='HTML')
 
     except:
+        bot.send_message(message.chat.id, coord_to_md(pickle_load(get_key(message.chat.id))[-5:]), parse_mode='HTML')
         bot.send_message(message.chat.id, 'Sorry, something went wrong')
         pass
 
 @bot.message_handler(commands=["getall"])
-def getgeo(message):
+def getall(message):
     try:
-        bot.send_message(message.chat.id, coord_to_md(pickle_load("pickles/{}.pickle".format(get_key(message.chat.id))), gmaps), parse_mode='HTML')
+        bot.send_message(message.chat.id, coord_to_md(pickle_load(get_key(message.chat.id))), parse_mode='HTML')
     except:
         bot.send_message(message.chat.id, 'Sorry, something went wrong')
         pass
