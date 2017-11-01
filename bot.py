@@ -57,7 +57,9 @@ location = {}   #data store dict
 
 @bot.message_handler(commands=["help"])
 def helpme(message):
-    bot.send_message(message.chat.id, config.HELP_TEXT, parse_mode='HTML')     
+    bot.send_message(message.chat.id, config.HELP_TEXT, parse_mode='HTML')  
+    botan.track(config.BOTAN_KEY, message.chat.id, message, '/helo')
+   
     
     
 @bot.message_handler(commands=["start"])
@@ -72,6 +74,8 @@ def start(message):
     keyboard = types.ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
     button_geo = types.KeyboardButton(text="SNEEZED!! !", request_location=True)
     keyboard.add(button_geo)
+    botan.track(config.BOTAN_KEY, message.chat.id, message, '/start')
+
     bot.send_message(message.chat.id, "Tap when sneezed", reply_markup=keyboard)
  
    
@@ -85,6 +89,8 @@ def locat(message):
     bot.send_message(message.chat.id, "Bless you! It's your {} sneezes".format(str(location[user_key][-1][0])))        
     pickle_dump(user_key, location[get_key(message.chat.id)][-1])
     location[user_key] = pickle_load(user_key)[-10:] 
+    botan.track(config.BOTAN_KEY, message.chat.id, message, '/location')
+
     if location[user_key][-1][0] % 10 == 0 :
         bot.send_sticker(message.chat.id, config.PLANTAIN_STICK) #send podorojnik sticker
 
@@ -99,6 +105,8 @@ def sneeze(message):
     bot.send_message(message.chat.id, "Bless you! It's your {} sneezes".format(str(location[user_key][-1][0])))
     pickle_dump(user_key, location[get_key(message.chat.id)][-1])
     location[user_key] = pickle_load(user_key)[-10:] 
+    botan.track(config.BOTAN_KEY, message.chat.id, message, '/sneeze')
+
 
     if location[user_key][-1][0] % 10 == 0 :
         bot.send_sticker(message.chat.id, config.PLANTAIN_STICK) #send podorojnik sticker
@@ -107,10 +115,14 @@ def sneeze(message):
 @bot.message_handler(commands=["getgeo"])
 def getgeo(message):
     bot.send_message(message.chat.id, coord_to_md(pickle_load(get_key(message.chat.id))[-5:]), parse_mode='HTML')
+    botan.track(config.BOTAN_KEY, message.chat.id, message, '/getgeo')
+
 
 @bot.message_handler(commands=["getall"])
 def getall(message):
     bot.send_message(message.chat.id, coord_to_md(pickle_load(get_key(message.chat.id))), parse_mode='HTML')
+    botan.track(config.BOTAN_KEY, message.chat.id, message, '/getall')
+
 
 
     
