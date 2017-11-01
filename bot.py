@@ -8,7 +8,6 @@
 
 import telebot
 from telebot import types
-import gmplot
 import flask
 import logging
 
