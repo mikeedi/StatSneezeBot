@@ -8,9 +8,11 @@ import time
 from hashlib import md5
 import pickle
 import os
+import googlemaps
 
 #translation coordinate to street names and return html-like text
-def coord_to_md(coord_list, gmaps):
+gmaps = googlemaps.Client(key=config.GGL_API_TOKEN)
+def coord_to_md(coord_list, gmaps=gmaps):
     if coord_list[0][0] == 0:
         del coord_list[0]
         

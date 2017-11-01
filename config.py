@@ -5,6 +5,7 @@
 
 BOT_TOKEN = 'Telegram bot api token'
 BOTAN_KEY = 'Yandex Metrics api key'
+GGL_API_TOKEN = 'GOOGLE API KEY'
 PLANTAIN_STICK = 'CAADAgADiB4AAlOx9wNxz1H_WaIWjAI' # sticker key
 
 
