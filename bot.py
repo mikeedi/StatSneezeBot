@@ -17,9 +17,7 @@ from processing import *
 import config
 
 
-gmaps = googlemaps.Client(key=config.GGL_API_TOKEN)
 
-API_TOKEN = config.BOT_TOKEN
 
 WEBHOOK_HOST = 'IP of your server '
 WEBHOOK_PORT = 8443  # 443, 80, 88 or 8443 (port need to be 'open')
@@ -29,7 +27,7 @@ WEBHOOK_SSL_CERT = 'CERT.pem'  # Path to the ssl certificate
 WEBHOOK_SSL_PRIV = 'KEY.pem' # Path to the ssl private key
 
 WEBHOOK_URL_BASE = "https://%s:%s" % (WEBHOOK_HOST, WEBHOOK_PORT)
-WEBHOOK_URL_PATH = "/%s/" % (API_TOKEN)
+WEBHOOK_URL_PATH = "/%s/" % (config.API_TOKEN)
 
 
 logger = telebot.logger
@@ -146,7 +144,7 @@ bot.remove_webhook()
 bot.set_webhook(url=WEBHOOK_URL_BASE+WEBHOOK_URL_PATH,
                 certificate=open(WEBHOOK_SSL_CERT, 'r'))
 
-Start flask server
+#Start flask server
 app.run(host=WEBHOOK_LISTEN,
         port=WEBHOOK_PORT,
         ssl_context=(WEBHOOK_SSL_CERT, WEBHOOK_SSL_PRIV),
