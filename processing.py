@@ -9,6 +9,8 @@ from hashlib import md5
 import pickle
 import os
 import googlemaps
+import config
+
 
 #translation coordinate to street names and return html-like text
 gmaps = googlemaps.Client(key=config.GGL_API_TOKEN)
