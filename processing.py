@@ -33,7 +33,8 @@ def exist(path):
 
 
 # use pickle instead database
-def pickle_load(filename):
+def pickle_load(user_hash):
+    filename = 'pickles/{}.pickle'.format(user_hash)
     with open(filename, 'rb') as f:
         obj = pickle.load(f)
     return obj
