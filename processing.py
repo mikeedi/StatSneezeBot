@@ -36,7 +36,7 @@ def exist(path):
     return True  
 
 
-# use pickle instead database
+# use pickle instead database (maybe it is bad way)
 def pickle_load(user_hash, filename=None):
     if filename == None:
         filename = 'pickles/{}.pickle'.format(user_hash)
@@ -59,6 +59,7 @@ def pickle_dump(user_hash, last, filename=None):
 def get_key(user_id):
     return md5(str(user_id).encode()).hexdigest()
 
+# translate of time
 def unix_to_local(t):
     return time.strftime("%D %H:%M", time.gmtime(int(t+10800))) # we use GMT + 3 time zone.
 
