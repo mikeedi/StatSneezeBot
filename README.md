@@ -1,6 +1,6 @@
 # StatSneezeBot
-Would you like to collect, perhaps, useless statistics about something? [@StatSneezeBot]('https://t.me/statsneezebot') can help in this.
-![](chat.gif)
+Would you like to collect, perhaps, useless statistics about something? [@StatSneezeBot](https://t.me/statsneezebot) can help in this.
+![](gif/chat.gif)
 ## What is used
 - [pytelegrambotapi](https://github.com/eternnoir/pyTelegramBotAPI)
 - [flask](http://flask.pocoo.org/)
