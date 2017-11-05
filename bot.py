@@ -85,12 +85,12 @@ def start(message):
 def locat(message):
     user_key = get_key(message.chat.id)
     if user_key not in location.keys():
-        location[user_key] = pickle_load(user_key)[-10:]
+        location[user_key] = pickle_load(user_key)[-5:]
     location[user_key].append([location[user_key][-1][0] + 1, message.location.longitude, \
                                                 message.location.latitude, message.date])
     bot.send_message(message.chat.id, "Bless you! It's your {} sneezes".format(str(location[user_key][-1][0])))        
     pickle_dump(user_key, location[get_key(message.chat.id)][-1])
-    location[user_key] = pickle_load(user_key)[-10:] 
+    location[user_key] = pickle_load(user_key)[-5:] 
     if location[user_key][-1][0] % 10 == 0 :
         bot.send_sticker(message.chat.id, config.PLANTAIN_STICK) #send podorojnik sticker
     botan.track(config.BOTAN_KEY, message.chat.id, message, '/location')
@@ -101,12 +101,12 @@ def locat(message):
 def sneeze(message): 
     user_key = get_key(message.chat.id)
     if (get_key(message.chat.id) not in location.keys()):
-        location[user_key] = pickle_load(user_key)[-10:]
+        location[user_key] = pickle_load(user_key)[-5:]
     location[user_key].append([location[user_key][-1][0] + 1, 'None', 'None', message.date])
                                      # add sneeze count
     bot.send_message(message.chat.id, "Bless you! It's your {} sneezes".format(str(location[user_key][-1][0])))
     pickle_dump(user_key, location[get_key(message.chat.id)][-1])
-    location[user_key] = pickle_load(user_key)[-10:] 
+    location[user_key] = pickle_load(user_key)[-5:] 
     if location[user_key][-1][0] % 10 == 0 :
         bot.send_sticker(message.chat.id, config.PLANTAIN_STICK) #send podorojnik sticker
     botan.track(config.BOTAN_KEY, message.chat.id, message, '/sneeze')
