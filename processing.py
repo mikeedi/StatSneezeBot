@@ -71,19 +71,19 @@ def get_last_location(coord):
 
 def map_render(user_hash):
     location = pickle_load(user_hash)
-    lat, lon = get_last_location(coord)
-        if lat == 'None' or lon == 'None':
-            return 'You have no location'
-        
-        else:
-            gmap = gmplot.GoogleMapPlotter(lat, lon, 16, apikey=config.GGL_API_TOKEN)
-            for c in location:
-                lat = c[2]
-                lon = c[1]
-                if lat == "None" or lon == "None":
-                    continue
+    lat, lon = get_last_location(location)
+    if lat == 'None' or lon == 'None':
+        return 'You have no location'
+    
+    else:
+        gmap = gmplot.GoogleMapPlotter(lat, lon, 16, apikey=config.GGL_API_TOKEN)
+        for c in location:
+            lat = c[2]
+            lon = c[1]
+            if lat == "None" or lon == "None":
+                continue
 
 
-                gmap.scatter([lat], [lon] 'b', marker=True)
-            gmap.draw("{}.html".format(get_key(message.chat.id)))
-            return "http://url/{}.html".format(get_key(message.chat.id))
+            gmap.scatter([lat], [lon], 'b', marker=True)
+        gmap.draw("{}.html".format(user_hash))
+        return "http://url/{}.html".format(get_key(user_hash))
