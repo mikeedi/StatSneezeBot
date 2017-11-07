@@ -122,10 +122,11 @@ def getall(message):
     bot.send_message(message.chat.id, coord_to_md(pickle_load(get_key(message.chat.id))), parse_mode='HTML')
     botan.track(config.BOTAN_KEY, message.chat.id, message, '/getall')
 
-
-
-    
-    
+# get maps with your sneezes
+@bot.message_handler(commands=["getmap"])
+def getmap(message):
+    bot.send_message(message.chat.id, map_render(message.chat.id))
+    botan.track(config.BOTAN_KEY, message.chat.id, message, '/getmap')
     
 # Remove webhook, it fails sometimes the set if there is a previous webhook
 bot.remove_webhook()
