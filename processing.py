@@ -76,7 +76,7 @@ def map_render(user_hash):
         return 'You have no location'
 
     else:
-        gmap = gmplot.GoogleMapPlotter(lat, lon, 16, apikey=config.GGL_MAPS_TOKEN)
+        gmap = gmplot.GoogleMapPlotter(lat, lon, 16, apikey=config.GGL_API_TOKEN)
         gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
         for c in location:
             lat = c[2]
