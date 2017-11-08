@@ -64,26 +64,25 @@ def unix_to_local(t):
     return time.strftime("%D %H:%M", time.gmtime(int(t+10800))) # we use GMT + 3 time zone.
 
 def get_last_location(coord):
-    for c in coord[-1:]:
-        if c[2] != 'None' and c[1] != 'None':
+    for c in reversed(coord):
+        if type(c[2]) == float  and type(c[1]) == float:
             return c[2], c[1]
-        return 'None', 'None'
+    return 'None', 'None'
 
 def map_render(user_hash):
     location = pickle_load(user_hash)
     lat, lon = get_last_location(location)
     if lat == 'None' or lon == 'None':
         return 'You have no location'
-    
+
     else:
-        gmap = gmplot.GoogleMapPlotter(lat, lon, 16, apikey=config.GGL_API_TOKEN)
+        gmap = gmplot.GoogleMapPlotter(lat, lon, 16, apikey=config.GGL_MAPS_TOKEN)
+        gmap.coloricon = "http://www.googlemapsmarkers.com/v1/%s/"
         for c in location:
             lat = c[2]
             lon = c[1]
             if lat == "None" or lon == "None":
                 continue
-
-
-            gmap.scatter([lat], [lon], 'b', marker=True)
-        gmap.draw("{}.html".format(user_hash))
-        return "http://url/{}.html".format(get_key(user_hash))
+            gmap.marker(lat, lon, title=unix_to_local(c[-1]) + " UTC/GMT +3")
+        gmap.draw("../templates/{}.html".format(user_hash))
+        return "http://188.166.88.76/{}.html".format(user_hash)
