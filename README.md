@@ -53,7 +53,9 @@ def locat(message):
                                                 message.location.latitude, message.date])  # add sneeze count
     ...
 ```
-- /getgeo
+- /getgeo  
+I use [googlemaps](https://github.com/googlemaps/google-maps-services-python) for transforming coordinate location to street name  
+Implentation of this contain in processing.py (coord_to_md function).
 ``` Python
 # get last 5 sneezes location
 @bot.message_handler(commands=["getgeo"])
@@ -69,10 +71,10 @@ def getall(message):
     bot.send_message(message.chat.id, coord_to_md(pickle_load(get_key(message.chat.id))), parse_mode='HTML')
 ``` 
 ## Sneeze on map
-- /getmap
+- /getmap  
 For rendering of sneeze markers on map I use [gmplot](https://github.com/vgm64/gmplot) library  
 You can [see](http://188.166.88.76/test) how it works.
-![](gif/test_screen)
+![](gif/test_screen.png)
 
 ## What's next?
 * Visualizing location for user (__done__)
