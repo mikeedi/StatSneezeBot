@@ -68,6 +68,12 @@ def getgeo(message):
 def getall(message):
     bot.send_message(message.chat.id, coord_to_md(pickle_load(get_key(message.chat.id))), parse_mode='HTML')
 ``` 
+## Sneeze on map
+- /getmap
+For rendering of sneeze markers on map I use [gmplot](https://github.com/vgm64/gmplot) library  
+You can [see](http://188.166.88.76/test) how it works.
+![](gif/test_screen)
+
 ## What's next?
-* Visualizing location for user
+* Visualizing location for user (__done__)
 * Heatmap (sneezes-warning places)
