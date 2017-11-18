@@ -1,5 +1,6 @@
 # StatSneezeBot
-Would you like to collect, perhaps, useless statistics about something? [@StatSneezeBot](https://t.me/statsneezebot) can help in this.
+Would you like to collect, perhaps, useless statistics about something? [@StatSneezeBot](https://t.me/statsneezebot) can help in this.  
+This bot can store data about your sneezes and visualize it on map. It can be useful to detect allergic-dangerous, viral or pepper in the air places. Or probably you have passion to collect different, perhaps useless, iformation about smth. 
 ![](gif/chat.gif)
 ## What is used
 - [pytelegrambotapi](https://github.com/eternnoir/pyTelegramBotAPI)
